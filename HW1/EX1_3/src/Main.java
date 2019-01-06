@@ -9,6 +9,7 @@ public class Main {
         s = userInput.nextLine();
 
         for(int i = 0; i < s.length(); i++){
+            //PT -- if(s.charAt(i) < '0' || s.charAt(i) > '9'){
             if(s.charAt(i) < 48 || s.charAt(i) > 57){
                     System.out.println("ERROR!! Letter detected. Program aborted.");
                 num /= 10;
