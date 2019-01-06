@@ -75,4 +75,6 @@ public class Employee {
     public String getSupervisor() { return supervisor; }
 
     public void setSupervisor(String supervisor) { this.supervisor = supervisor; }
+    
+    //PT -- override toString()?
 }
