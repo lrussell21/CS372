@@ -18,6 +18,7 @@ public class Main {
         }while(rangeTest);
 
         for(int i = 0; i < numOfRandom; i++){
+            //PT -- randNum = ThreadLocalRandom.current().nextInt(0, 100) + 1;
             randNum = ThreadLocalRandom.current().nextInt(0, 100 + 1);
             if(randNum % 2 == 0){
                 System.out.printf("%2d EVEN\n", randNum);
