@@ -17,7 +17,7 @@ public class Police extends Person {
         pay += dollaBills;
     }
     public String employeeID(){
-        return String.valueOf(this.ID);
+        return ID;
     }
 
     public void setTitle(Role title){

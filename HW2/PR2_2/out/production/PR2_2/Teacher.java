@@ -16,7 +16,7 @@ public class Teacher extends Person implements Employee{
     public void pay(double dollaBills){
         pay += dollaBills;
     }
-    public int employeeID(){
+    public String employeeID(){
         return ID;
     }
 

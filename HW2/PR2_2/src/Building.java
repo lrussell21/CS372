@@ -1,6 +1,10 @@
 public abstract class Building {
     private String name, address;
 
+    public Building(){
+        this.name = "UNSET";
+        this.address = "Homeless";
+    }
     public Building(String name, String address){
         this.name = name;
         this.address = address;
