@@ -1,6 +1,6 @@
 /**
  * This class is a base class used for inheritance for the Police, Teacher, and Kid classes.
- * @see Police
+ * @see Police  //PT -- nice!
  * @see Kid
  * @see Teacher
  * @author Levi Russell
@@ -15,7 +15,7 @@ public class Person {
     /**
      * Initialize the Person object to default values.
      */
-    public Person(){
+    public Person(){ //PT -- if you don't want a default Person, why have a default constructor?
         this.name = "UNSET";
         this.age = -1;
         this.phoneNum = 1111111;
@@ -46,6 +46,7 @@ public class Person {
      * @param age is new age.
      */
     public void setAge(int age) {
+        //PT -- validate age and phone number. -2
         this.age = age;
     }
 
