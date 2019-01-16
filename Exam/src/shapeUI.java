@@ -19,6 +19,14 @@ public class shapeUI extends javax.swing.JComponent {
     private JTextArea shapeDetail;
 
     /**
+     * Creates object shapeUI object to run program.
+     * @param args arguments used for program(None for this one).
+     */
+    public static void main(String[] args) {
+        shapeUI run = new shapeUI();
+    }
+
+    /**
      * Creates object and runs initialization function.
      */
     public shapeUI(){
@@ -129,12 +137,5 @@ public class shapeUI extends javax.swing.JComponent {
         // Sets label to icon based on shape and sets text to that shapes detailed string.
         shapeLabel.setIcon(icon);
         shapeDetail.setText(sC.shapes.get(index).getDetailString());
-    }
-}
-
-// Test class with main and UI object to run program.
-class shapeUITest{
-    public static void main(String[] args) {
-        shapeUI run = new shapeUI();
     }
 }
