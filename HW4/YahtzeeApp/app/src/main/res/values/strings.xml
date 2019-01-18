@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Yahtzee</string>
+    <color name="dark">#00151a</color>
+    <color name="white">#FFFFFF</color>
+</resources>
