@@ -27,7 +27,7 @@
           <component id="98df5" class="javax.swing.JButton" binding="songPlayButton">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag top="10" left="0" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="Play"/>
@@ -36,10 +36,19 @@
           <component id="8d4ba" class="javax.swing.JButton" binding="searchButton">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="Search"/>
+            </properties>
+          </component>
+          <component id="29466" class="javax.swing.JButton" binding="testButton">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Button"/>
             </properties>
           </component>
         </children>
@@ -53,7 +62,7 @@
         <children>
           <component id="db1b0" class="javax.swing.JSlider" binding="danceabilitySlider">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="0" bottom="0" right="100" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -63,8 +72,10 @@
               <orientation value="1"/>
               <paintLabels value="false"/>
               <paintTicks value="false"/>
-              <paintTrack value="true"/>
+              <paintTrack value="false"/>
+              <snapToTicks value="false"/>
               <value value="0"/>
+              <valueIsAdjusting value="false"/>
             </properties>
             <clientProperties>
               <JSlider.isFilled class="java.lang.Boolean" value="false"/>
@@ -82,6 +93,7 @@
               <minorTickSpacing value="0"/>
               <orientation value="1"/>
               <paintTicks value="false"/>
+              <paintTrack value="false"/>
               <value value="0"/>
             </properties>
           </component>
@@ -96,7 +108,7 @@
               <minorTickSpacing value="0"/>
               <orientation value="1"/>
               <paintTicks value="false"/>
-              <paintTrack value="true"/>
+              <paintTrack value="false"/>
               <value value="0"/>
             </properties>
           </component>

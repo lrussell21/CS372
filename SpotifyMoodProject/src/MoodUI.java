@@ -1,3 +1,5 @@
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -26,7 +28,9 @@ public class MoodUI implements ActionListener {
     private JButton songPlayButton;
     private JButton searchButton;
     private JLabel songImage;
+    private JButton testButton;
     private double danceValueSend, happyValueSend, energyValueSend;
+    DefaultListModel model = new DefaultListModel();
 
     public MoodUI(){
         apiObject = new spotifyAPIFetcher();
@@ -54,9 +58,6 @@ public class MoodUI implements ActionListener {
         infoPanel.setPreferredSize(new Dimension(400, 400));
         userInputPanel.setPreferredSize(new Dimension(400, 400));
 
-        danceabilityLabel.setForeground(fgColor);
-        happyLabel.setForeground(fgColor);
-        energyLabel.setForeground(fgColor);
 
         danceabilitySlider.addChangeListener(new ChangeListener() {
             @Override
@@ -90,19 +91,19 @@ public class MoodUI implements ActionListener {
         JScrollPane listScroll = new JScrollPane(songList);
         listScroll.setPreferredSize(new Dimension(380, 230));
         infoPanel.add(listScroll);
-
         songList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if(e.getValueIsAdjusting()) {
-                    System.out.printf("Selected song: %s\n", apiObject.songNames.get(songList.getSelectedIndex()));
-                    apiObject.getTrackData(apiObject.songIDs.get(songList.getSelectedIndex() + 1));
+                    System.out.printf("Selected song: %s\n", apiObject.allSongs.get(songList.getSelectedIndex()).getSongName());
+                    //apiObject.getTrackData(apiObject.songIDs.get(songList.getSelectedIndex() + 1));
 
                     try{
                         Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-                        URL imgUrl = new URL(apiObject.songImageLinks.get(songList.getSelectedIndex() + 1));
-                        System.out.println(apiObject.songImageLinks.get(songList.getSelectedIndex() + 1));
+                        System.out.println(apiObject.allSongs.get(songList.getSelectedIndex()).getCoverartLink());
+
+                        URL imgUrl = new URL(apiObject.allSongs.get(songList.getSelectedIndex()).getCoverartLink());
                         Image img = toolkit.getImage(imgUrl);
                         img = img.getScaledInstance(100,100,Image.SCALE_SMOOTH);
 
@@ -120,33 +121,53 @@ public class MoodUI implements ActionListener {
 
         searchButton.addActionListener(this);
         songPlayButton.addActionListener(this);
+        testButton.addActionListener(this);
+
+
 
         frame.add(mainPanel);
+
+        apiObject.getTracks();
+        //songList.setListData(apiObject.songNames.toArray());
+        for(int i = 0; i < apiObject.allSongs.size(); i++){
+            model.addElement(apiObject.allSongs.get(i).getArtist() + " - " + apiObject.allSongs.get(i).getSongName());
+        }
+        songList.setModel(model);
+
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
             if(e.getSource() == songPlayButton){
-            System.out.println("Trying to open song...");
-            // Goes to link
-            int songIndex = songList.getSelectedIndex();
-            String idToGoTo = apiObject.songIDs.get(songIndex + 1);
-            System.out.println(idToGoTo);
-            String link = "https://open.spotify.com/track/" + idToGoTo;
-            try {
-                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                    Desktop.getDesktop().browse(new URI(link));
+                System.out.println("Trying to open song...");
+                // Goes to link
+                int songIndex = songList.getSelectedIndex();
+                String idToGoTo = apiObject.allSongs.get(songIndex).getID();
+                System.out.println(idToGoTo);
+                String link = "https://open.spotify.com/track/" + idToGoTo;
+                try {
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        Desktop.getDesktop().browse(new URI(link));
+                    }
+                 }catch (Exception ex){;}
+
+            }else if (e.getSource() == searchButton){
+                model.removeAllElements();
+                for(int i = 0; i < apiObject.allSongs.size(); i++){
+                    model.addElement(apiObject.allSongs.get(i).getArtist() + " - " + apiObject.allSongs.get(i).getSongName());
                 }
-            }catch (Exception ex){;}
+                System.out.println("" + apiObject.songIDs.size());
+                //songList.setModel(model);
 
-        }else if (e.getSource() == searchButton){
+                System.out.println("Refreshed song list...");
+            }else if (e.getSource() == testButton){
+                System.out.println("----------------------------------");
 
-            apiObject.getTracks();
-            songList.setListData(apiObject.songNames.toArray());
-            System.out.println("Refreshed song list...");
+                apiObject.getCategoryIDs();
+                apiObject.playlistIDToSongsThreaded();
 
-        }
+            }
     }
 
     public static void main(String[] args) {

@@ -11,16 +11,20 @@ import java.util.regex.Pattern;
 
 
 public class spotifyAPIFetcher {
+    public ArrayList<songs> allSongs = new ArrayList<>();
     public ArrayList<String> songIDs = new ArrayList<>();
-    public ArrayList<String> songNames = new ArrayList<>();
-    public ArrayList<String> songImageLinks = new ArrayList<>();
+    //public ArrayList<String> songNames = new ArrayList<>();
+    //public ArrayList<String> songImageLinks = new ArrayList<>();
 
+    String[] categories = {"pop","mood","edm_dance","decades","hiphop","chill","workout","party","focus","sleep","rock","dinner","jazz","rnb","romance","indie_alt","gaming","soul","classical"};
+    public ArrayList<String> playlistIDs = new ArrayList<>();
 
     private static final String client_id = "10187fa73dd54eb3833f69da476e6861";
     private static final String secret_id = "72bbadeb5355484db26245c552429326";
     private static final String redirectUri = "http://localhost:8888/callback/";
 
     private static final String refreshToken = "AQAvn4j17UIArnNmVCMbMvBsy-qprZFnS9EGflsjJ9a0-cryLjQ9DXWisv4WDvLp8HX-_zJEAcZDltGwZpHCKh_StjhPZTBXoBZmYHC790lxDgFjqhO8EGuuGYUhYw9NFOEcVQ";
+
     private static String token;
     double dance, happy, energy;
 
@@ -113,9 +117,12 @@ public class spotifyAPIFetcher {
 
         String[] outputSongIDparts = fullOuputString.split("\"uri\" : \"spotify:track:");
         for(String p: outputSongIDparts) {
-            songIDs.add(p.substring(0, 22));
+            //songIDs.add(p.substring(0, 22));
+            if(p.charAt(0) != '{') {
+                songs temp = new songs(this, p.substring(0, 22), token);
+            }
         }
-
+/*
         String[] outputNameparts = fullOuputString.split("\"is_local\" : false,\n" + "      \"name\" : \"");
         for(String p: outputNameparts) {
             for(int i = 1; i < p.length(); i++){
@@ -127,14 +134,11 @@ public class spotifyAPIFetcher {
 
         }
 
-
-
-
         String[] outPictures = fullOuputString.split("\"height\" : 300,");
         for(String p: outPictures) {
             songImageLinks.add(p.substring(20, 84));
         }
-
+*/
 
 
 
@@ -144,6 +148,7 @@ public class spotifyAPIFetcher {
     public void setToken(String serverToken){
         token = serverToken.substring(17, 100);
         System.out.println("TOKEN: " + token);
+
     }
 
 
@@ -177,9 +182,131 @@ public class spotifyAPIFetcher {
             e.printStackTrace();
         }
 
-
-
     }
+
+
+    public void getCategoryIDs(){
+        for(int cats = 0; cats < categories.length - 11; cats++) {
+
+            String fullOuputString = "";
+            try {
+                URL url = new URL("https://api.spotify.com/v1/browse/categories/" + categories[cats] + "/playlists");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+
+                if (conn.getResponseCode() != 200) {
+                    throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+                }
+
+                BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+                String output;
+                //System.out.println("Output from Server ....");
+                while ((output = br.readLine()) != null) {
+                    //System.out.println(output);
+                    fullOuputString += output + "\n";
+                }
+                conn.disconnect();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            String[] categoryIdParts = fullOuputString.split("\"id\" : \"");
+            for(String p: categoryIdParts) {
+                for(int i = 1; i < p.length(); i++){
+                    if(p.charAt(0) != 's' && p.charAt(i) == ',' && i < 30){
+                        //System.out.println("Added: " + p.substring(0, i - 1));
+                        playlistIDs.add(p.substring(0, i - 1));
+                        break;
+                    }
+                }
+            }
+
+        }
+    }
+
+/*
+    public void playlistIDToSongs(){
+        songIDs.clear();
+        songNames.clear();
+        for(int list = 0; list < 10; list++) {
+
+            String fullOuputString = "";
+            try {
+                URL url = new URL("https://api.spotify.com/v1/playlists/" + playlistIDs.get(list) + "/tracks");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+
+
+                if (conn.getResponseCode() != 200) {
+                    throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+                }
+
+                BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+                String output;
+                //System.out.println("Output from Server ....");
+                while ((output = br.readLine()) != null) {
+                    //System.out.println(output);
+                    fullOuputString += output + "\n";
+                }
+                conn.disconnect();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            String[] outputSongIDparts = fullOuputString.split("\"uri\" : \"spotify:track:");
+            for(String p: outputSongIDparts) {
+                songIDs.add(p.substring(0, 22));
+            }
+
+            String[] outputNameparts = fullOuputString.split("\"is_local\" : false,\n" + "      \"name\" : \"");
+            for(String p: outputNameparts) {
+                for(int i = 1; i < p.length(); i++){
+                    if(p.charAt(i) == ',' && i < 90){
+                        songNames.add(p.substring(0, i - 1));
+                        i = p.length() + 1;
+                    }
+                }
+
+            }
+
+
+
+        }
+    }
+*/
+
+    public void playlistIDToSongsThreaded(){
+        Thread s = new Thread(this::playlistIDToSongss);
+        s.start();
+    }
+
+    public void playlistIDToSongss(){
+        getSongIDs testThreadSong;
+        for(int i = 0; i < playlistIDs.size(); i++){
+            try {
+                Thread.sleep(50);
+                testThreadSong = new getSongIDs(this, token, playlistIDs.get(i));
+                Thread s = new Thread(testThreadSong);
+                System.out.println("Started thread: " + i);
+                s.start();
+            }catch (Exception ex){}
+        }
+    }
+
 
 
 }
