@@ -1,3 +1,6 @@
+
+
+import com.google.gson.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,7 +41,7 @@ public class getSongIDs implements Runnable {
                 String output;
                 //System.out.println("Output from Server ....");
                 while ((output = br.readLine()) != null) {
-                    System.out.println(output);
+                    //System.out.println(output);
                     fullOuputString += output + "\n";
                 }
                 conn.disconnect();
@@ -48,31 +51,61 @@ public class getSongIDs implements Runnable {
                 e.printStackTrace();
             }
 
+            parseData(fullOuputString);
+    }
 
-            String[] outputSongIDparts = fullOuputString.split("\"uri\" : \"spotify:track:");
-            for(String p: outputSongIDparts) {
-                if(p.charAt(0) != '{') {
-                    try{
-                        Thread.sleep(100);
-                    }catch (Exception ex){ }
-                    // TODO:
-                    // Cant use newSong because we spam server too much
-                    // so we need to get all info from this output instead of track by track.
-                    //newSong = new songs(s, p.substring(0, 22), token);
-                }
-            }
-/*
-            String[] outputNameparts = fullOuputString.split("\"is_local\" : false,\n" + "      \"name\" : \"");
-            for(String p: outputNameparts) {
-                for(int i = 1; i < p.length(); i++){
-                    if(p.charAt(i) == ',' && i < 90){
-                        s.songNames.add(p.substring(0, i - 1));
-                        i = p.length() + 1;
-                    }
-                }
-            }
-            */
-            System.out.println("Finished");
+
+
+    public void parseData(String data){
+
+        JsonParser jsonparser = new JsonParser();
+        JsonElement jsonTree = jsonparser.parse(data);
+        JsonObject jsonObject = null;
+        if(jsonTree.isJsonObject()){
+            jsonObject = jsonTree.getAsJsonObject();
+        }
+
+        JsonElement mainJsonObject = jsonObject.get("items");
+        JsonArray songListArray = mainJsonObject.getAsJsonArray();
+
+
+        for(int i = 0; i < songListArray.size(); i++) {
+            JsonElement individualSong = songListArray.get(i);
+            JsonObject songObject = individualSong.getAsJsonObject();
+
+            // track info
+            JsonObject trackObj = songObject.get("track").getAsJsonObject();
+
+            //System.out.println("Track: " + trackObj.get("name"));
+            //System.out.println("Track: " + trackObj.get("id"));
+
+            newSong = new songs(s, trackObj.get("id").getAsString(), "NOTSET", trackObj.get("name").getAsString(), "NOTSET", token);
+
+            //JsonObject artistObj1 = songObject.get("artists").getAsJsonObject();
+
+            //System.out.println("Track artist: " + artistObj1.get("name"));
+
+            //System.out.println("--------------------------");
+
+        }
+        //artist info
+        /*
+        JsonElement artist = trackObj.get("artists");
+        JsonObject artistObj = artist.getAsJsonObject();
+        System.out.println(artistObj.get("name"));
+        System.out.println(artistObj.get("id"));
+
+
+        String result = trackObj.getAsString();
+
+        System.out.println(result);
+*/
+        //JsonElement test2 = j.get("id");
+        //JsonElement test = jsonObject.get("artists");
+        //System.out.println(songId.getAsString());
+
+
+
     }
 
 

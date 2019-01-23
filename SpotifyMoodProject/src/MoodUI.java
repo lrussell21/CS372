@@ -1,4 +1,3 @@
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -29,7 +28,6 @@ public class MoodUI implements ActionListener {
     private JButton searchButton;
     private JLabel songImage;
     private JButton testButton;
-    private double danceValueSend, happyValueSend, energyValueSend;
     DefaultListModel model = new DefaultListModel();
 
     public MoodUI(){
@@ -63,7 +61,7 @@ public class MoodUI implements ActionListener {
             @Override
             public void stateChanged(ChangeEvent e) {
                 danceabilityLabel.setText("Danceability: " + danceabilitySlider.getValue());
-                danceValueSend = (double)danceabilitySlider.getValue()/100;
+                apiObject.dance = (double)danceabilitySlider.getValue()/100;
             }
         });
 
@@ -71,7 +69,7 @@ public class MoodUI implements ActionListener {
             @Override
             public void stateChanged(ChangeEvent e) {
                 happyLabel.setText("Happy: " + happySlider.getValue());
-                happyValueSend = (double)happySlider.getValue()/100;
+                apiObject.happy = (double)happySlider.getValue()/100;
             }
         });
 
@@ -79,12 +77,12 @@ public class MoodUI implements ActionListener {
             @Override
             public void stateChanged(ChangeEvent e) {
                 energyLabel.setText("Energy: " + energySlider.getValue());
-                energyValueSend = (double) energySlider.getValue()/100;
+                apiObject.energy = (double) energySlider.getValue()/100;
             }
         });
 
 
-        String[] baseText = {"No Songs Yet..."};
+        String[] baseText = {"Loading..."};
         songList.setListData(baseText);
 
         songList.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
@@ -101,9 +99,9 @@ public class MoodUI implements ActionListener {
                     try{
                         Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-                        System.out.println(apiObject.allSongs.get(songList.getSelectedIndex()).getCoverartLink());
+                        System.out.println(apiObject.displaySongs.get(songList.getSelectedIndex()).getCoverartLink());
 
-                        URL imgUrl = new URL(apiObject.allSongs.get(songList.getSelectedIndex()).getCoverartLink());
+                        URL imgUrl = new URL(apiObject.displaySongs.get(songList.getSelectedIndex()).getCoverartLink());
                         Image img = toolkit.getImage(imgUrl);
                         img = img.getScaledInstance(100,100,Image.SCALE_SMOOTH);
 
@@ -127,8 +125,7 @@ public class MoodUI implements ActionListener {
 
         frame.add(mainPanel);
 
-        apiObject.getTracks();
-        //songList.setListData(apiObject.songNames.toArray());
+        apiObject.getTopTracks();
         for(int i = 0; i < apiObject.allSongs.size(); i++){
             model.addElement(apiObject.allSongs.get(i).getArtist() + " - " + apiObject.allSongs.get(i).getSongName());
         }
@@ -143,7 +140,7 @@ public class MoodUI implements ActionListener {
                 System.out.println("Trying to open song...");
                 // Goes to link
                 int songIndex = songList.getSelectedIndex();
-                String idToGoTo = apiObject.allSongs.get(songIndex).getID();
+                String idToGoTo = apiObject.displaySongs.get(songIndex).getID();
                 System.out.println(idToGoTo);
                 String link = "https://open.spotify.com/track/" + idToGoTo;
                 try {
@@ -153,11 +150,12 @@ public class MoodUI implements ActionListener {
                  }catch (Exception ex){;}
 
             }else if (e.getSource() == searchButton){
+                apiObject.checkAudioFeatures();
                 model.removeAllElements();
-                for(int i = 0; i < apiObject.allSongs.size(); i++){
-                    model.addElement(apiObject.allSongs.get(i).getArtist() + " - " + apiObject.allSongs.get(i).getSongName());
+                for(int i = 0; i < apiObject.displaySongs.size(); i++){
+                    model.addElement(apiObject.displaySongs.get(i).getArtist() + " - " + apiObject.displaySongs.get(i).getSongName());
                 }
-                System.out.println("" + apiObject.songIDs.size());
+                System.out.println("" + apiObject.displaySongs.size());
                 //songList.setModel(model);
 
                 System.out.println("Refreshed song list...");
