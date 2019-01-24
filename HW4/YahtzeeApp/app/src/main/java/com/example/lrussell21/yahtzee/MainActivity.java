@@ -8,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Main app activity.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private int diceAmount = 5;
@@ -24,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
     Thread outputImages;
     TextView scoreOut;
 
+    /**
+     * On app creation
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,16 +53,15 @@ public class MainActivity extends AppCompatActivity {
                 for(int i = 0; i < diceAmount; i++){
                     diceThreads[i].start();
                 }
-                //scoreThread.start();
                 outputImages.start();
             }
         });
-
-
     }
 
+    /**
+     * Sets up Dice and Dice threads.
+     */
     private void diceSetup(){
-        //scoreThread = new Thread(this::outputScore);
         outputImages = new Thread(this::outputImages);
         diceMoveArray = new diceMove[diceAmount];
         diceMoveArray[0] = new diceMove();
@@ -77,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Outputs dice images based on values gotten from threads running in background.
+     */
     private void outputImages(){
         try{
             Thread.sleep(100);
@@ -85,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for(int j = 0; j < 35; j++) {
-            //Toast.makeText(getApplicationContext(), "" + diceMoveArray[0].getFaceValue(),
-            //        Toast.LENGTH_SHORT).show();
             try{
                 Thread.sleep(75);
             }catch(Exception ex){
@@ -101,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets dice images
+     * @param img on screen image object to change.
+     * @param faceValue value to change dice image to.
+     */
     private void setImage(ImageView img, int faceValue){
         if(faceValue == 1){
             img.setImageResource(R.drawable.die_face_1);
@@ -115,38 +127,7 @@ public class MainActivity extends AppCompatActivity {
         }else if (faceValue == 6){
             img.setImageResource(R.drawable.die_face_6);
         }else{
-            //System.out.println("Error");
+            System.out.println("Error");
         }
     }
-
-    /*
-    public void outputScore(){
-        try {
-            Thread.sleep(20);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
-        boolean allThreadsDone;
-        do{
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-            allThreadsDone = true;
-            for(int i = 0; i < diceAmount; i++){
-                if(diceThreads[i].getState() != Thread.State.NEW && diceThreads[i].getState() != Thread.State.TERMINATED){
-                    allThreadsDone = false;
-                }
-                int score = 0;
-                for(int j = 0; j < diceAmount; j++){
-                    score += diceMoveArray[j].getFaceValue();
-                    //System.out.println("" + diceThreads[i].getState());
-                    //System.out.printf("Score:%d  FACE:%d\n", score, diceMoveArray[i].getFaceValue());
-                }
-                scoreText.setText("Score: " + score);
-            }
-        }while(!allThreadsDone);
-    }
-    */
 }

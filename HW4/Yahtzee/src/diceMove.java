@@ -3,6 +3,9 @@ import java.awt.*;
 import java.net.URL;
 import java.util.Random;
 
+/**
+ * Dice class that rolls dice and changes output picture.
+ */
 public class diceMove implements Runnable{
     private JLabel _label;
     Random rn = new Random();
@@ -13,17 +16,23 @@ public class diceMove implements Runnable{
     ImageIcon face5;
     ImageIcon face6;
 
+    /**
+     * Initialize diceMove objects for each label.
+     * @param label label that will have dice icon.
+     */
     public diceMove(JLabel label){
         this._label = label;
         images();
         _label.setIcon(randomDieSide());
     }
 
+    /**
+     * Run function for Threads to call that rolls the dice.
+     */
     @Override
     public void run() {
         for(int i = 0; i < 35; i++){
             _label.setIcon(randomDieSide());
-            //System.out.printf("INT: %d FACE: %s\n", randomInt, _label.getName());
             try{
                 Thread.sleep(75);
             }catch (Exception ex){
@@ -32,6 +41,10 @@ public class diceMove implements Runnable{
         }
     }
 
+    /**
+     * Sets a random number from 1 to 6 then sets label name to that number for easy counting.
+     * @return the dice face object that corresponds to the random number generated.
+     */
     private ImageIcon randomDieSide(){
         int randomInt = rn.nextInt(6) + 1;
         //System.out.println(randomInt);
@@ -58,10 +71,17 @@ public class diceMove implements Runnable{
         }
     }
 
+    /**
+     * Gets face value of dice.
+     * @return
+     */
     public int getFaceValue(){
         return Integer.parseInt(_label.getName());
     }
 
+    /**
+     * Creates all the dice images.
+     */
     public void images(){
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         int ratio = 100;

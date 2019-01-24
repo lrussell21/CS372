@@ -3,10 +3,16 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.*;
 
+/**
+ * Webspider that visits sites and gets URL's and emails from the website.
+ */
 public class WebSpider {
     HashMap<String,Boolean> link = new HashMap<>();
     Set<String> email = new HashSet<>();
 
+    /**
+     * Creates Webspider object that starts the spider.
+     */
     public WebSpider(){
         // My high school's website has a lot of mailto emails...
         String startAddress = "https://meadhs.mead354.org/ourpages/administration/";
@@ -34,6 +40,10 @@ public class WebSpider {
         listEmails();
     }
 
+    /**
+     * Takes in a url and searches it and saves URL's and emails.
+     * @param address web address to spider.
+     */
     public void search(String address){
 
         try {
@@ -113,10 +123,11 @@ public class WebSpider {
         catch (Exception ex) {
             System.out.printf("Oops: %s", ex.getMessage());
         }
-
-
     }
 
+    /**
+     * Lists all emails the program has gottem from spider.
+     */
     public void listEmails(){
         System.out.printf("\nOUTPUTING EMAILS:\n");
         System.out.println(email);

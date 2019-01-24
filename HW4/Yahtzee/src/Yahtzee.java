@@ -2,9 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.lang.Thread;
 
+/**
+ * Creates five dice and allows the user to roll them and then outputs the score.
+ */
 public class Yahtzee implements ActionListener {
     JFrame frame;
     int diceAmount = 5;
@@ -21,10 +23,16 @@ public class Yahtzee implements ActionListener {
     private JButton rollButton;
     private JTextArea scoreText;
 
+    /**
+     * Creates Yahtzee object and initializes output screen.
+     */
     public Yahtzee(){
         init();
     }
 
+    /**
+     * Initialize output screen.
+     */
     public void init(){
         frame = new JFrame("Yahtzee");
         frame.setSize(new Dimension(550, 185));
@@ -43,6 +51,9 @@ public class Yahtzee implements ActionListener {
         rollButton.addActionListener(this);
     }
 
+    /**
+     * Sets up dice with multiThreading.
+     */
     private void diceSetup(){
         testThread = new Thread(this::outputScore);
         diceMoveArray = new diceMove[diceAmount];
@@ -59,36 +70,30 @@ public class Yahtzee implements ActionListener {
         }
     }
 
+    /**
+     * Outputs score after done rolling.
+     */
     public void outputScore(){
         try {
-            Thread.sleep(20);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
+            diceThreads[0].join();
+            diceThreads[1].join();
+            diceThreads[2].join();
+            diceThreads[3].join();
+            diceThreads[4].join();
+        }catch (Exception ex){}
+
+        int score = 0;
+        for(int j = 0; j < diceAmount; j++){
+            score += diceMoveArray[j].getFaceValue();
         }
-        boolean allThreadsDone;
-        do{
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-            allThreadsDone = true;
-            for(int i = 0; i < diceAmount; i++){
-                if(diceThreads[i].getState() != Thread.State.NEW && diceThreads[i].getState() != Thread.State.TERMINATED){
-                    allThreadsDone = false;
-                }
-                int score = 0;
-                for(int j = 0; j < diceAmount; j++){
-                    score += diceMoveArray[j].getFaceValue();
-                    //System.out.println("" + diceThreads[i].getState());
-                    //System.out.printf("Score:%d  FACE:%d\n", score, diceMoveArray[i].getFaceValue());
-                }
-                scoreText.setText("Score: " + score);
-            }
-        }while(!allThreadsDone);
+        scoreText.setText("Score: " + score);
         run = true;
     }
 
+    /**
+     * Listens for button click.
+     * @param e action from objects that have a listener.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == rollButton && run == true){
