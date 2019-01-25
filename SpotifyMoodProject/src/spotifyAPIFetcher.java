@@ -1,4 +1,9 @@
-import jdk.nashorn.internal.runtime.ECMAException;
+
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,41 +13,33 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class spotifyAPIFetcher {
     public ArrayList<songs> allSongs = new ArrayList<>();
-    public ArrayList<String> songIDs = new ArrayList<>();
     public ArrayList<songs> displaySongs = new ArrayList<>();
-    //public ArrayList<String> songNames = new ArrayList<>();
-    //public ArrayList<String> songImageLinks = new ArrayList<>();
-
-    String[] categories = {"pop","mood","edm_dance","decades","hiphop","chill","workout","party","focus","sleep","rock","dinner","jazz","rnb","romance","indie_alt","gaming","soul","classical"};
     public ArrayList<String> playlistIDs = new ArrayList<>();
+    private String[] categories = {"pop", "mood", "edm_dance", "decades", "hiphop", "chill", "workout", "party", "focus", "sleep", "rock", "dinner", "jazz", "rnb", "romance", "indie_alt", "gaming", "soul", "classical"};
 
     private static final String client_id = "10187fa73dd54eb3833f69da476e6861";
     private static final String secret_id = "72bbadeb5355484db26245c552429326";
-    private static final String redirectUri = "http://localhost:8888/callback/";
-
-    private static final String refreshToken = "AQAvn4j17UIArnNmVCMbMvBsy-qprZFnS9EGflsjJ9a0-cryLjQ9DXWisv4WDvLp8HX-_zJEAcZDltGwZpHCKh_StjhPZTBXoBZmYHC790lxDgFjqhO8EGuuGYUhYw9NFOEcVQ";
-
     private static String token;
+
+    private static int saveLastPos = 0;
+
     public double dance, happy, energy;
+    public boolean danceCheck = false;
+    public boolean happyCheck = false;
+    public boolean energyCheck = false;
+    public double tolerance = 0.10;
 
+    public spotifyAPIFetcher() { }
 
-    public spotifyAPIFetcher(){
-
-    }
-
-    public void sendValues(double dance, double happy, double energy){
-        this.dance = dance;
-        this.happy = happy;
-        this.energy = energy;
-    }
-
-    public boolean getToken(){
+    /**
+     * Gives Spotify client id and secret id and returns token.
+     * @return token for api use.
+     */
+    public boolean getToken() {
 
         String spoturl = "https://accounts.spotify.com/api/token";
         String urlParameters = "grant_type=client_credentials";
@@ -70,7 +67,7 @@ public class spotifyAPIFetcher {
                     //System.out.println(output);
                 }
                 setToken(tokenStringReceive);
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.printf(e.getMessage());
             }
             conn.disconnect();
@@ -85,20 +82,28 @@ public class spotifyAPIFetcher {
 
     }
 
-
-    public void setToken(String serverToken){
+    /**
+     * Parses token json for token then sets token variable.
+     * @param serverToken
+     */
+    private void setToken(String serverToken) {
         token = serverToken.substring(17, 100);
         System.out.println("TOKEN: " + token);
-
     }
 
-    public void getTopTracks(){
-        getSongIDs temp = new getSongIDs(this, token,"37i9dQZEVXbLRQDuF5jeBp");
+    /**
+     * Gets top 50 US tracks.
+     */
+    public void getTopTracks() {
+        getSongIDs temp = new getSongIDs(this, token, "37i9dQZEVXbLRQDuF5jeBp");
         temp.run();
     }
 
-    public void getCategoryIDs(){
-        for(int cats = 0; cats < categories.length - 11; cats++) {
+    /**
+     * Gets list of playlist ID's from each category.
+     */
+    public void getPlaylistIDs() {
+        for (int cats = 0; cats < categories.length; cats++) {
 
             String fullOuputString = "";
             try {
@@ -129,77 +134,165 @@ public class spotifyAPIFetcher {
             }
 
 
-            String[] categoryIdParts = fullOuputString.split("\"id\" : \"");
-            for(String p: categoryIdParts) {
-                for(int i = 1; i < p.length(); i++){
-                    if(p.charAt(0) != 's' && p.charAt(i) == ',' && i < 30){
-                        //System.out.println("Added: " + p.substring(0, i - 1));
-                        playlistIDs.add(p.substring(0, i - 1));
-                        break;
-                    }
-                }
+            // Parse incoming Json for playlist ID's.
+            JsonParser jsonparser = new JsonParser();
+            JsonElement jsonTree = jsonparser.parse(fullOuputString);
+            JsonObject jsonObject = null;
+            if (jsonTree.isJsonObject()) {
+                jsonObject = jsonTree.getAsJsonObject();
+            }
+
+            JsonObject mainJsonObject = jsonObject.get("playlists").getAsJsonObject();
+
+            JsonArray items = mainJsonObject.get("items").getAsJsonArray();
+            JsonObject playlistObj;
+            for (int i = 0; i < items.size(); i++) {
+                playlistObj = items.get(i).getAsJsonObject();
+                playlistIDs.add(playlistObj.get("id").getAsString());
             }
 
         }
     }
 
-
-    public void playlistIDToSongsThreaded(){
-        Thread s = new Thread(this::playlistIDToSongss);
+    /**
+     * Creates a background thread to start gathering songs from playlists.
+     */
+    public void playlistIDToSongsThreaded() {
+        Thread s = new Thread(this::playlistIDToSongs);
         s.start();
     }
 
-    public void playlistIDToSongss(){
-        getSongIDs testThreadSong;
-        for(int i = 0; i < 50; i++){
+    /**
+     * Goes through each playlist, creates a thread then gets all the songs from the playlist and adds it to allsongs Arraylist.
+     */
+    private void playlistIDToSongs() {
+        getSongIDs threadSong;
+        Thread getFeatures;
+        Thread s = null;
+        //int saveSize = 0;
+        for (int i = 0; i < playlistIDs.size(); i++) {
             try {
+                //saveSize = allSongs.size();
                 Thread.sleep(100);
-                // TODO SWITCH THIS BACK
-                testThreadSong = new getSongIDs(this, token, playlistIDs.get(i));
-                Thread s = new Thread(testThreadSong);
-                //System.out.println("Started thread: " + i);
+                threadSong = new getSongIDs(this, token, playlistIDs.get(i));
+                s = new Thread(threadSong);
+                System.out.println("Started thread: " + i);
                 s.start();
-            }catch (Exception ex){}
-        }
-        try{
-            Thread.sleep(30000);
-        }catch (Exception ex){}
-        System.out.println("NUMBER OF SONGS: " + allSongs.size());
-        multiThreadAudioFeatures();
-    }
-
-    public void multiThreadAudioFeatures(){
-        Thread mtaf = new Thread(this::getAudioFeatures);
-        mtaf.start();
-    }
-
-    private void getAudioFeatures(){
-        for(int i = 0; i < allSongs.size(); i++) {
-            if((double)(i/allSongs.size()) * 100 % 10 == 0){
-                System.out.println("Loading: " + i);
-            }
-            try {
-                Thread.sleep(10);
+                s.join();
+                if(i % 10 == 0){
+                    System.out.println("Getting track features...");
+                    getFeatures = new Thread(this::getTrackFeatures);
+                    getFeatures.start();
+                    getFeatures.join();
+                }
             } catch (Exception ex) {
+                System.out.println(ex.getMessage());
             }
-            try {
-                allSongs.get(i).parseTrackFeatures();
-            }catch(Exception ex){System.out.printf("ERROR!:", ex.getMessage());}
         }
-        System.out.println("All song data retrieved!");
+        System.out.println("NUMBER OF SONGS: " + allSongs.size());
     }
 
-    public void checkAudioFeatures(){
+    /**
+     * Goes through allSongs Arraylist and gets each tracks features from the Spotify API.
+     */
+    public void getTrackFeatures() {
+        boolean run = true;
+        do {
+
+            int count = saveLastPos;
+            int bounds = saveLastPos + 100;
+            String urlIDs = "";
+            for (int song = saveLastPos; song < bounds; song++) {
+                if (song < allSongs.size()) {
+                    urlIDs += ",";
+                    urlIDs += allSongs.get(song).getID();
+                    saveLastPos++;
+                } else {
+                    run = false;
+                    break;
+                }
+            }
+            if(urlIDs == ""){
+                break;
+            }
+            String fullOuputString = "";
+            try {
+                URL url = new URL("https://api.spotify.com/v1/audio-features/?ids=" + urlIDs.substring(1));
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+
+                if (conn.getResponseCode() != 200) {
+                    System.out.println("ERROR: " + conn.getResponseCode() + " " + conn.getResponseMessage());
+                    throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+                }
+
+                BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+                String output;
+                while ((output = br.readLine()) != null) {
+                    //System.out.println(output);
+                    fullOuputString += output + "\n";
+                }
+                conn.disconnect();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            JsonParser jsonparser = new JsonParser();
+            JsonElement jsonTree = jsonparser.parse(fullOuputString);
+            JsonObject jsonObject = null;
+            if (jsonTree.isJsonObject()) {
+                jsonObject = jsonTree.getAsJsonObject();
+            }
+
+            JsonArray audioFeatures = jsonObject.get("audio_features").getAsJsonArray();
+            JsonObject indSongs;
+            String tempString = "";
+            for (int songToSetFeature = 0; songToSetFeature < audioFeatures.size(); songToSetFeature++) {
+                try {
+                    indSongs = audioFeatures.get(songToSetFeature).getAsJsonObject();
+                    allSongs.get(count).setDanceability(indSongs.get("danceability").getAsDouble());
+                    allSongs.get(count).setHappy(indSongs.get("valence").getAsDouble());
+                    allSongs.get(count).setEnergy(indSongs.get("energy").getAsDouble());
+                    //System.out.println("----------------------------------------------");
+                    //System.out.println("ID " + allSongs.get(count).getID());
+                    //System.out.println("Dance " + indSongs.get("danceability").getAsDouble());
+                    //System.out.println("Valence " + indSongs.get("valence").getAsDouble());
+                    //System.out.println("Energy" + indSongs.get("energy").getAsDouble());
+                    //System.out.println("----------------------------------------------");
+                    count++;
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+
+
+            }
+        } while (run);
+        System.out.println("All song data retrieved!...");
+    }
+
+    /**
+     * Checks if each songs track features match the user's input in the UI.
+     */
+    public void checkAudioFeatures() {
         displaySongs.clear();
-        for(songs song: allSongs){
-            if(this.dance  <= song.getDanceability() + 0.1 && this.dance >= song.getDanceability() -0.1){
-                if(this.happy <= song.getHappy() + 0.1 && this.happy >= song.getDanceability() -0.1) {
-                    if(this.energy <= song.getEnergy() + 0.1 && this.energy >= song.getEnergy() -0.1) {
+        for (songs song : allSongs) {
+            if(!danceCheck && !happyCheck && !energyCheck){
+                displaySongs = (ArrayList<songs>)allSongs.clone();
+                break;
+            }
+            if ((this.dance <= (song.getDanceability() + tolerance) && this.dance >= (song.getDanceability() - tolerance)) || !danceCheck) {
+                if ((this.happy <= (song.getHappy() + tolerance) && this.happy >= (song.getHappy() - tolerance)) || !happyCheck) {
+                    if ((this.energy <= (song.getEnergy() + tolerance) && this.energy >= (song.getEnergy() - tolerance)) || !energyCheck) {
                         displaySongs.add(song);
                     }
                 }
             }
         }
     }
-
 }

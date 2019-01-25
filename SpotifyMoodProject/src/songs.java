@@ -12,176 +12,111 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class songs {
-    spotifyAPIFetcher s;
     private double danceability = -1.0, happy = -1.0, energy = -1.0;
-    private String artist, songName, ID, token, coverartLink;
+    private String artist, songName, ID, coverartLink;
 
-    public songs(spotifyAPIFetcher s,String ID, String token){
-        this.s = s;
-        this.ID = ID;
-        this.token = token;
-        addSong();
-        s.allSongs.add(this);
-    }
-
-    public songs(spotifyAPIFetcher s ,String ID, String artist, String songName, String coverartLink, String token){
+    /**
+     * Initialize song object with specified values.
+     * @param s Spotify api object.
+     * @param ID Song's ID.
+     * @param artist Song's artist.
+     * @param songName Song's name.
+     * @param coverartLink Link to song's album cover art.
+     */
+    public songs(spotifyAPIFetcher s ,String ID, String artist, String songName, String coverartLink){
         this.ID = ID;
         this.artist = artist;
         this.songName = songName;
         this.coverartLink = coverartLink;
-        this.token = token;
         s.allSongs.add(this);
     }
 
-    private void addSong(){
-        String fullOuputString = "";
-        try {
-            URL url = new URL("https://api.spotify.com/v1/tracks/" + ID);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", "Bearer " + token);
-
-            if (conn.getResponseCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
-            }
-
-            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-
-            String output;
-            //System.out.println("-------------------------------------------\n\n\n\n\n");
-            while ((output = br.readLine()) != null) {
-                //System.out.println(output);
-                fullOuputString += output + "\n";
-            }
-            conn.disconnect();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        String[] outputNameparts = fullOuputString.split("\"name\" : \"");
-        for(String p: outputNameparts) {
-            for(int i = 1; i < p.length(); i++){
-                if(p.charAt(0) != '{' && p.charAt(i) == ','){
-                    songName = p.substring(0, i - 1);
-                    break;
-                }
-            }
-        }
-
-        boolean run = true;
-        String[] outputArtistNameparts = fullOuputString.split("\"name\" : \"");
-        for(String p: outputArtistNameparts) {
-            for(int i = 1; i < p.length(); i++){
-                if(p.charAt(0) != '{' && p.charAt(i) == ','){
-                    artist = p.substring(0, i - 1);
-                    run = false;
-                    break;
-                }
-            }
-            if(!run){
-                break;
-            }
-        }
-
-
-        String[] outPictures = fullOuputString.split("\"height\" : 300,");
-        for(String p: outPictures) {
-            if(p.charAt(0) != '{') {
-                coverartLink = p.substring(16, 80);
-                break;
-            }
-        }
-
-    }
-
-
-    public void parseTrackFeatures(){
-
-
-
-        String fullOuputString = "";
-        try {
-            URL url = new URL("https://api.spotify.com/v1/audio-features/" + ID);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", "Bearer " + token);
-
-            if (conn.getResponseCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
-            }
-
-            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-
-            String output;
-            while ((output = br.readLine()) != null) {
-                //System.out.println(output);
-                fullOuputString += output + "\n";
-            }
-            conn.disconnect();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        JsonParser jsonparser = new JsonParser();
-        JsonElement jsonTree = jsonparser.parse(fullOuputString);
-        JsonObject jsonObject = null;
-        if(jsonTree.isJsonObject()){
-            jsonObject = jsonTree.getAsJsonObject();
-        }
-
-        JsonElement data = jsonObject.get("danceability");
-        danceability = data.getAsDouble();
-        data = jsonObject.get("valence");
-        happy = data.getAsDouble();
-        data = jsonObject.get("energy");
-        energy = data.getAsDouble();
-
-        //System.out.println("Dance :" + danceability + " Happy: " + happy + " Energy: " + energy);
-
-    }
-
-
+    /**
+     * Gets song artist.
+     * @return string of artist name.
+     */
     public String getArtist() {
         return artist;
     }
 
+    /**
+     * Get song name.
+     * @return string of song's name.
+     */
     public String getSongName() {
         return songName;
     }
 
+    /**
+     * Get song's Spotify ID.
+     * @return string with song's Spotify ID.
+     */
     public String getID() {
         return ID;
     }
 
+    /**
+     * Get song's album art link.
+     * @return string of link to cover art.
+     */
     public String getCoverartLink() {
         return coverartLink;
     }
 
+    /**
+     * Get danceability of track.
+     * @return double of song's danceability.
+     */
     public double getDanceability() {
         return danceability;
     }
 
+    /**
+     * Get how happy the track is.
+     * @return double of song's happiness.
+     */
     public double getHappy() {
         return happy;
     }
 
+    /**
+     * Get how energetic a song is.
+     * @return double of how energetic the track is.
+     */
     public double getEnergy() {
         return energy;
     }
 
-    public String toString(){
-        return artist + " - " + songName + " : " + ID;
+    /**
+     * Set song's danceability.
+     * @param danceability double of how danceable the song is (0.0 - 1.0)/
+     */
+    public void setDanceability(double danceability) {
+        this.danceability = danceability;
     }
 
+    /**
+     * Set song's happiness.
+     * @param happy  double of how happy the song is (0.0 - 1.0)/
+     */
+    public void setHappy(double happy) {
+        this.happy = happy;
+    }
+
+    /**
+     * Set song's energy.
+     * @param energy  double of how energetic the song is (0.0 - 1.0)/
+     */
+    public void setEnergy(double energy) {
+        this.energy = energy;
+    }
+
+    /**
+     * Returns a string of songs details.
+     * @return a string of songs details.
+     */
+    public String toString(){
+        return artist + " - " + songName + " : " + ID + "\n" + "Dance: " + danceability + "\n" + "Happy: " + happy + "\n" + "Energy: " + energy;
+    }
 
 }

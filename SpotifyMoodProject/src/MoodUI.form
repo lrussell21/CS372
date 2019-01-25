@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="MoodUI">
-  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="593" height="400"/>
@@ -8,9 +8,202 @@
     <properties/>
     <border type="none"/>
     <children>
+      <grid id="12978" binding="userInputPanel" layout-manager="GridBagLayout">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="75e5f" class="javax.swing.JSlider" binding="happySlider">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="2" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="0" bottom="0" right="80" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <majorTickSpacing value="0"/>
+              <maximum value="100"/>
+              <minorTickSpacing value="0"/>
+              <opaque value="false"/>
+              <orientation value="1"/>
+              <paintTicks value="false"/>
+              <paintTrack value="true"/>
+              <value value="0"/>
+            </properties>
+          </component>
+          <component id="7303a" class="javax.swing.JSlider" binding="energySlider">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="2" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="0" bottom="0" right="60" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <majorTickSpacing value="0"/>
+              <maximum value="100"/>
+              <minorTickSpacing value="0"/>
+              <opaque value="false"/>
+              <orientation value="1"/>
+              <paintTicks value="false"/>
+              <paintTrack value="true"/>
+              <value value="0"/>
+            </properties>
+          </component>
+          <component id="61ae6" class="javax.swing.JLabel" binding="danceabilityLabel">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Danceability: 0"/>
+            </properties>
+          </component>
+          <component id="6adc9" class="javax.swing.JLabel" binding="happyLabel">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Happiness: 0"/>
+            </properties>
+          </component>
+          <component id="c97ba" class="javax.swing.JLabel" binding="energyLabel">
+            <constraints>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Energy: 0"/>
+            </properties>
+          </component>
+          <component id="2688b" class="javax.swing.JCheckBox" binding="danceCheckBox">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="a1f8c" class="javax.swing.JCheckBox" binding="happyCheckBox">
+            <constraints>
+              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="898af" class="javax.swing.JCheckBox" binding="energyCheckBox">
+            <constraints>
+              <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="1273f" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <horizontalAlignment value="10"/>
+              <horizontalTextPosition value="11"/>
+              <text value="Enable Filter:"/>
+            </properties>
+          </component>
+          <component id="8d4ba" class="javax.swing.JButton" binding="filterButton">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="10" left="0" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Filter"/>
+            </properties>
+          </component>
+          <component id="13ad2" class="javax.swing.JSlider" binding="toleranceSlider">
+            <constraints>
+              <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+            </properties>
+          </component>
+          <component id="61915" class="javax.swing.JLabel" binding="toleranceLabel">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Tolerance: 10"/>
+            </properties>
+          </component>
+          <component id="a50f3" class="javax.swing.JSlider" binding="danceabilitySlider">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="0" bottom="0" right="100" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <opaque value="false"/>
+              <orientation value="1"/>
+              <paintTrack value="true"/>
+              <value value="0"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="92f17" binding="songInfoPanel" layout-manager="GridBagLayout">
+        <constraints>
+          <grid row="0" column="1" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="5aca0" class="javax.swing.JLabel" binding="songNameLabel">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Song Name Here"/>
+            </properties>
+          </component>
+          <component id="d0b3b" class="javax.swing.JLabel" binding="artistLabel">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Artist Here"/>
+            </properties>
+          </component>
+          <component id="98df5" class="javax.swing.JButton" binding="songPlayButton">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Play"/>
+            </properties>
+          </component>
+          <component id="23847" class="javax.swing.JLabel" binding="songImage">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </grid>
       <grid id="d6535" binding="infoPanel" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="2" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -23,130 +216,6 @@
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties/>
-          </component>
-          <component id="98df5" class="javax.swing.JButton" binding="songPlayButton">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value="Play"/>
-            </properties>
-          </component>
-          <component id="8d4ba" class="javax.swing.JButton" binding="searchButton">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value="Search"/>
-            </properties>
-          </component>
-          <component id="29466" class="javax.swing.JButton" binding="testButton">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value="Button"/>
-            </properties>
-          </component>
-        </children>
-      </grid>
-      <grid id="12978" binding="userInputPanel" layout-manager="GridBagLayout">
-        <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="db1b0" class="javax.swing.JSlider" binding="danceabilitySlider">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag top="0" left="0" bottom="0" right="100" weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <majorTickSpacing value="0"/>
-              <maximum value="100"/>
-              <minorTickSpacing value="0"/>
-              <orientation value="1"/>
-              <paintLabels value="false"/>
-              <paintTicks value="false"/>
-              <paintTrack value="false"/>
-              <snapToTicks value="false"/>
-              <value value="0"/>
-              <valueIsAdjusting value="false"/>
-            </properties>
-            <clientProperties>
-              <JSlider.isFilled class="java.lang.Boolean" value="false"/>
-              <Slider.paintThumbArrowShape class="java.lang.Boolean" value="false"/>
-            </clientProperties>
-          </component>
-          <component id="75e5f" class="javax.swing.JSlider" binding="happySlider">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag top="0" left="0" bottom="0" right="80" weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <majorTickSpacing value="0"/>
-              <maximum value="100"/>
-              <minorTickSpacing value="0"/>
-              <orientation value="1"/>
-              <paintTicks value="false"/>
-              <paintTrack value="false"/>
-              <value value="0"/>
-            </properties>
-          </component>
-          <component id="7303a" class="javax.swing.JSlider" binding="energySlider">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag top="0" left="0" bottom="0" right="60" weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <majorTickSpacing value="0"/>
-              <maximum value="100"/>
-              <minorTickSpacing value="0"/>
-              <orientation value="1"/>
-              <paintTicks value="false"/>
-              <paintTrack value="false"/>
-              <value value="0"/>
-            </properties>
-          </component>
-          <component id="61ae6" class="javax.swing.JLabel" binding="danceabilityLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value="Danceability: 0"/>
-            </properties>
-          </component>
-          <component id="6adc9" class="javax.swing.JLabel" binding="happyLabel">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value="Happy: 0"/>
-            </properties>
-          </component>
-          <component id="c97ba" class="javax.swing.JLabel" binding="energyLabel">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value="Energy: 0"/>
-            </properties>
-          </component>
-          <component id="23847" class="javax.swing.JLabel" binding="songImage">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value=""/>
-            </properties>
           </component>
         </children>
       </grid>
