@@ -1,3 +1,19 @@
+/*
+FEEDBACK
+Read from the file correctly: 20/20%
+Implement class hierarchy correctly: 18/20%
+Populate appropriate data structures with shape data: 15/15%
+Show list of shapes correctly: 15/15%
+Show specific shape properties correctly: 15/15%
+Well-structured, well-commented code: 15/15%
+
+
+Comments:
+  interfaceShape should be an interface or abstract class.
+  getDetailString should note return null (if this were abstract or an interface).
+
+*/
+
 public class interfaceShape {
     protected String kind, color;
     protected int ID;
